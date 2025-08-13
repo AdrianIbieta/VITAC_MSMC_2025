@@ -1484,9 +1484,9 @@ let sabanaVisible = true;
 const sabanaKeysWanted = ['sA_Merluza_Austral','sA_Merluza_Cola','NASC_mezcla_MS.MC'];
 let sabanaSelectedKey = 'sA_Merluza_Cola'; // por defecto
 const sabanaLabels = {
-  'sA_Merluza_Austral': 'Z Merluza austral',
-  'sA_Merluza_Cola': 'AA Merluza de cola',
-  'NASC_mezcla_MS.MC': 'N sA Total'
+  'sA_Merluza_Austral': 'sA Merluza austral',
+  'sA_Merluza_Cola': 'sA Merluza de cola',
+  'NASC_mezcla_MS.MC': 'sA Total'
 };
 
 function niceLabelFromKey(k){ return k.replace(/^sA_/,'').replace(/_/g,' '); }
@@ -1645,11 +1645,11 @@ function ensureSabanaControl(){
     wrap.style.font = '12px/1.2 Arial, sans-serif';
     wrap.style.boxShadow = '0 1px 3px rgba(0,0,0,.25)';
     wrap.innerHTML = `
-      <label style="display:block;margin:2px 0 4px;font-weight:bold">sA (Z/AA/N)</label>
+      <label style="display:block;margin:2px 0 4px;font-weight:bold">Valor sA</label>
       <select id="saSelect" style="width:100%;margin-bottom:6px">
-        <option value="sA_Merluza_Austral">Z Merluza austral</option>
-        <option value="sA_Merluza_Cola" selected>AA Merluza de cola</option>
-        <option value="NASC_mezcla_MS.MC">N sA Total</option>
+        <option value="sA_Merluza_Austral">Merluza austral</option>
+        <option value="sA_Merluza_Cola" selected>Merluza de cola</option>
+        <option value="NASC_mezcla_MS.MC">sA Total</option>
       </select>
       <label style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
         <input type="checkbox" id="saToggle" checked />
