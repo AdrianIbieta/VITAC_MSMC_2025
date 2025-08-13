@@ -1557,26 +1557,59 @@ function buildSabanaLayer(){
   if(keysExistentes.length === 0) return;
   if(!keysExistentes.includes(sabanaSelectedKey)) sabanaSelectedKey = keysExistentes[0];
 
-  for(const r of sabanaData){
-    const lat1 = Number(r.Lat_S), lon1 = Number(r.Lon_S);
-    const lat2 = Number(r.Lat_E), lon2 = Number(r.Lon_E);
-    if(Number.isFinite(lat1) && Number.isFinite(lon1) && Number.isFinite(lat2) && Number.isFinite(lon2)){
-      const val = Number(r[sabanaSelectedKey]);
-      const seg = L.polyline([[lat1, lon1],[lat2, lon2]], { color: getColor(val), weight: 3, opacity: 0.9 });
-      const valStr = (val!=null && isFinite(val)) ? (val>=1 ? val.toFixed(1) : '0') : 'NA';
-      const fecha = r.Fecha || '';
-      const hora  = r.Hora  || '';
-      seg.bindTooltip(`${sabanaLabels[sabanaSelectedKey] || niceLabelFromKey(sabanaSelectedKey)}: ${valStr}\n${fecha} ${hora}`, {direction:'top'});
-      sabanaLayer.addLayer(seg);
-      // registrar un punto para etiqueta (siempre en INICIO)
-      const tname = (r.Transecta!=null && String(r.Transecta).trim()!=='') ? String(r.Transecta).trim() : null;
-      if(tname && !labelPoints.has(tname)){
-        const useLat = Number(r.Lat_S);
-        const useLon = Number(r.Lon_S);
-        labelPoints.set(tname, [useLat, useLon]);
+ for (const r of sabanaData) {
+  const lat1 = Number(r.Lat_S), lon1 = Number(r.Lon_S);
+  const lat2 = Number(r.Lat_E), lon2 = Number(r.Lon_E);
+
+  if (Number.isFinite(lat1) && Number.isFinite(lon1) &&
+      Number.isFinite(lat2) && Number.isFinite(lon2)) {
+
+    const val = Number(r[sabanaSelectedKey]);
+    const valStr = (val != null && Number.isFinite(val))
+      ? (val >= 1 ? val.toFixed(1) : '0')
+      : 'NA';
+
+    // --- Punto medio con columnas Lat_M / Lon_M (fallback al promedio de extremos)
+    const latM = Number(r.Lat_M);
+    const lonM = Number(r.Lon_M);
+    const useLat = Number.isFinite(latM) ? latM : (lat1 + lat2) / 2;
+    const useLon = Number.isFinite(lonM) ? lonM : (lon1 + lon2) / 2;
+
+    // --- Marker circular coloreado por el valor sA seleccionado
+    const seg = L.circleMarker([useLat, useLon], {
+      radius: 5,
+      color: getColor(val),
+      fillColor: getColor(val),
+      fillOpacity: 0.9,
+      weight: 1,
+      opacity: 0.9
+    });
+
+    // --- Tooltip: UBM en lugar de Fecha/Hora
+    const ubm = Number(r.UBM);
+    const ubmStr = Number.isFinite(ubm) ? ubm.toFixed(1) : 'NA';
+    seg.bindTooltip(
+      `${sabanaLabels[sabanaSelectedKey] || niceLabelFromKey(sabanaSelectedKey)}: ${valStr}\nUBM: ${ubmStr}`,
+      { direction: 'top' }
+    );
+
+    sabanaLayer.addLayer(seg);
+
+    // --- Registrar punto para etiqueta (se mantiene en INICIO)
+    const tname = (r.Transecta != null && String(r.Transecta).trim() !== '')
+      ? String(r.Transecta).trim()
+      : null;
+
+    if (tname && !labelPoints.has(tname)) {
+      const useLatLabel = Number(r.Lat_S);
+      const useLonLabel = Number(r.Lon_S);
+      if (Number.isFinite(useLatLabel) && Number.isFinite(useLonLabel)) {
+        labelPoints.set(tname, [useLatLabel, useLonLabel]);
       }
     }
   }
+}
+
   if(sabanaVisible) sabanaLayer.addTo(mapL);
   // pintar etiquetas
   try{
