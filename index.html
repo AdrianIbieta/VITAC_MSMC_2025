@@ -361,7 +361,7 @@ function updateLancePanel(l){
 /* === Map === */
 let mapL, markers=[];
 function initMap(){
-  mapL = L.map('mapLance').setView([-43,-75], 6);
+  mapL = L.map('mapLance').setView([-43,-75], 9);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18,attribution:'© OpenStreetMap contributors'}).addTo(mapL);
   L.control.scale({imperial:false}).addTo(mapL);
   const resetBtn = L.control({position:'topleft'});
@@ -385,8 +385,8 @@ function showMap(){
     m.on('click',()=> updateAll(String(l))); markers.push(m);
   });
   if(markers.length){
-    if(sel.length===1){ mapL.setView(markers[0].getLatLng(),6); }
-    else { const g = new L.featureGroup(markers); mapL.fitBounds(g.getBounds().pad(0.3), {maxZoom:6}); }
+    if(sel.length===1){ mapL.setView(markers[0].getLatLng(),9); }
+    else { const g = new L.featureGroup(markers); mapL.fitBounds(g.getBounds().pad(0.3), {maxZoom:9}); }
   }
 }
 
